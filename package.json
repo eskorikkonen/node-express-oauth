@@ -4,7 +4,8 @@
 	"description": "",
 	"main": "client.js",
 	"scripts": {
-		"test": "mocha --exit ./test/**/*",
+		"watch-server": "nodemon authorization-server.js",
+		"test": "mocha -R dot --exit ./test/**/*",
 		"test-dev": "mocha --watch ./test/**/*"
 	},
 	"repository": {
@@ -27,5 +28,8 @@
 		"moxios": "^0.4.0",
 		"sinon": "^9.0.2",
 		"supertest": "^4.0.2"
+	},
+	"devDependencies": {
+		"nodemon": "^2.0.6"
 	}
 }
