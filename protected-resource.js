@@ -47,7 +47,6 @@ app.get('/user-info', (req, res) => {
 
 		return res.status(200).json(responseObject).send();
 	} catch (error) {
-		console.log("Error: " + error);
 		return res.status(401).end();
 	}
 
