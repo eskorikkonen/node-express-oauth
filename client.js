@@ -23,9 +23,41 @@ app.use(timeout)
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-/*
-Your code here
-*/
+app.get('/authorize', (req, res) => {
+	state = randomString();
+
+	const uri = new URL(config.authorizationEndpoint);
+	uri.searchParams.append("response_type", "code");
+	uri.searchParams.append("client_id", config.clientId);
+	uri.searchParams.append("redirect_uri", config.redirectUri);
+	uri.searchParams.append("scope", "permission:name permission:date_of_birth");
+	uri.searchParams.append("state", state);
+
+	return res.redirect(uri);
+});
+
+app.get('/callback', (req, res) => {
+	if (req.query.state !== state) {
+		return res.status(403).end();
+	}
+
+	axios({
+		method: "POST",
+		url: config.tokenEndpoint,
+		auth: { username: config.clientId, password: config.clientSecret },
+		data: { code: req.query.code }
+	}).then(response => {
+		axios({
+			method: "GET",
+			url: config.userInfoEndpoint,
+			headers: {
+				authorization: `bearer ${response.data.access_token}`
+			}
+		}).then(response => {
+		res.render("welcome", { user: response.data });
+		});
+	});
+});
 
 const server = app.listen(config.port, "localhost", function () {
 	var host = server.address().address
